@@ -23,8 +23,8 @@ func main() {
 	// start pprof
 	runtime.SetBlockProfileRate(1)
 	go func() {
-		log.Println("http://localhost:6060/debug/pporf")
-		http.ListenAndServe("0.0.0.0:6060", nil)
+		log.Println("http://localhost:6060/debug/pprof")
+		log.Println(http.ListenAndServe("0.0.0.0:6060", nil))
 	}()
 	// server main
 	listner, err := net.Listen("tcp", *listenPort)
