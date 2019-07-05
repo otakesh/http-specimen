@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
+	"os"
 	"runtime"
 	"strings"
 
@@ -16,6 +17,7 @@ import (
 )
 
 func main() {
+	os.Open("xyz")
 	var listenPort = flag.String("p", ":8080", "port to listen")
 	flag.Parse()
 	// start pprof
@@ -32,18 +34,18 @@ func main() {
 	for {
 		conn, err := listner.Accept()
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		go func() {
 			defer conn.Close()
 			log.Printf("Accept %v\n", conn.RemoteAddr())
 			request, err := http.ReadRequest(bufio.NewReader(conn))
 			if err != nil {
-				panic(err)
+				log.Fatal(err)
 			}
 			dump, err := httputil.DumpRequest(request, true)
 			if err != nil {
-				panic(err)
+				log.Fatal(err)
 			}
 			fmt.Println(string(dump))
 			response := http.Response{
