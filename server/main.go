@@ -36,25 +36,27 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		go func() {
-			defer conn.Close()
-			log.Printf("Accept %v\n", conn.RemoteAddr())
-			request, err := http.ReadRequest(bufio.NewReader(conn))
-			if err != nil {
-				log.Fatal(err)
-			}
-			dump, err := httputil.DumpRequest(request, true)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(string(dump))
-			response := http.Response{
-				StatusCode: 200,
-				ProtoMajor: 1,
-				ProtoMinor: 0,
-				Body:       ioutil.NopCloser(strings.NewReader("Hello World\n")),
-			}
-			response.Write(conn)
-		}()
+		go requestHandler(conn)
 	}
+}
+
+func requestHandler(conn net.Conn) {
+	defer conn.Close()
+	log.Printf("Accept %v\n", conn.RemoteAddr())
+	request, err := http.ReadRequest(bufio.NewReader(conn))
+	if err != nil {
+		log.Fatal(err)
+	}
+	dump, err := httputil.DumpRequest(request, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(dump))
+	response := http.Response{
+		StatusCode: 200,
+		ProtoMajor: 1,
+		ProtoMinor: 0,
+		Body:       ioutil.NopCloser(strings.NewReader("Hello World\n")),
+	}
+	response.Write(conn)
 }
